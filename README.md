@@ -1,38 +1,35 @@
-# 📊 Discord Trading Signals Analyzer
+# Elite Crypto Signals Performance Analyser 📊
 
-![Python](https://img.shields.io/badge/python-3.x-blue)
-![Binance](https://img.shields.io/badge/binance-spot-yellow)
-![License](https://img.shields.io/badge/license-MIT-green)
 
----
 
-## 🚀 Overview
+## 🧩 Using Discrub to Obtain JSON Data
 
-This repository contains a **Python script** that:
+The project requires a **JSON export** of your crypto signal messages from Discord. You can easily obtain this file using the **Discrub** browser extension.
 
-* Parses Discord trading signals exported as JSON.
-* Validates symbols against **Binance Spot** markets.
-* Simulates trade outcomes over a 30‑day window using 1‑minute candles.
-* Produces **CSV reports** and aggregated performance metrics.
+### 🧠 What is Discrub?
 
-> Expects a **Discrub export** named `discord_signals.json` in the project root and requires a **Binance API key** to fetch historical klines.
+[**Discrub**](https://github.com/superseriousbusiness/discrub) is a browser extension that allows you to **export Discord channel messages** into a clean JSON file — perfect for analysis.
 
----
+### 📥 How to Use Discrub
 
-## ✨ Features
+1. **Install the Discrub extension**:
 
-* **📝 Signal Parsing:** Extracts symbol, direction, entry, stop, and multiple targets using robust regex rules.
-* **✅ Spot Validation:** Filters out futures/perpetual signals and inactive symbols.
-* **📈 Trade Simulation:** Simulates trade activation/exit on 1-min candles for up to 30 days, accounting for fees, slippage, and configurable exit policies.
-* **📂 Output Reports:** Generates CSV files with detailed results and aggregated metrics.
+   * Available for **Chrome**, **Edge**, and **Firefox** (search for “Discrub” in your browser’s extension store).
+2. **Open the Discord channel** that contains your crypto signals.
+3. **Click the Discrub icon** in your browser toolbar.
+4. Choose **Export as JSON**.
+5. Wait for the export to complete — this may take a few minutes depending on the number of messages.
+6. Save the resulting file as `discord_signals.json` in your project’s root directory.
+
+That’s it! You now have a ready-to-use JSON file that can be processed by the Elite Crypto Signals Performance Analyser.
 
 ---
 
-## 🛠 Prerequisites
+## 🛠️ Prerequisites
 
-* **Python 3.x** installed.
-* **Binance API key & secret** with Spot market read permissions.
-* **Discord messages export** in JSON format using **Discrub**.
+* Python 3.x installed on your system.
+* A valid API Key & Secret for Binance (Spot read permissions).
+* Exported signals JSON file (`discord_signals.json`) obtained using **Discrub**.
 
 ---
 
@@ -40,119 +37,88 @@ This repository contains a **Python script** that:
 
 1. Clone the repository:
 
-```bash
-git clone <https://github.com/JohnnyMeister/Elite-Crypto-Signals-Perfomance-Analyser.git>
-cd <repo-folder>
-```
-
+   ```bash
+   git clone https://github.com/JohnnyMeister/Elite-Crypto-Signals-Perfomance-Analyser.git
+   cd Elite-Crypto-Signals-Perfomance-Analyser
+   ```
 2. Install dependencies:
 
-```bash
-pip install python-binance tqdm
-```
+   ```bash
+   pip install python-binance tqdm
+   ```
 
 ---
 
-## 📥 Export JSON with Discrub
+## 🔧 Configuration
 
-1. Install the **Discrub** browser extension.
-2. Open Discord in your browser.
-3. Launch Discrub via the top-right button or extension icon.
-4. Load the desired channel/DM → **Export Loaded Messages → JSON**.
-5. Save as `discord_signals.json` in the repository root.
-
----
-
-## ⚙️ Configuration
-
-Open `analise_sinais.py` and edit:
+Open the main script (for example `Main.py`) and adjust settings such as:
 
 ```python
 API_KEY = "your_binance_api_key"
 API_SECRET = "your_binance_api_secret"
 
-VERBOSE = True  # Enable progress/info prints
-EXIT_POLICY = "first_tp"  # Options: 'first_tp', 'last_tp', 'scale_out_equal'
-TAKER_FEE_PCT = 0.04
-MAKER_FEE_PCT = 0.02
-USE_TAKER = True
+VERBOSE = True              # Show detailed progress/info
+EXIT_POLICY = "first_tp"    # Options: 'first_tp', 'last_tp', 'scale_out_equal'
+TAKER_FEE_PCT = 0.04        # Taker fee percentage
+MAKER_FEE_PCT = 0.02        # Maker fee percentage
+USE_TAKER = True            # Use taker execution if True
 ```
 
-> Script raises an error if API_KEY or API_SECRET are missing.
+Be sure your API credentials are correctly set; the script will error out otherwise.
 
 ---
 
 ## ▶️ Usage
 
-Ensure `discord_signals.json` exists, then run:
+With the `discord_signals.json` file in place and your API credentials configured, run:
 
 ```bash
-python analise_sinais.py
+python Main.py
 ```
 
-Outputs:
+**Outputs produced:**
 
-* **signals_analysis.csv** → validated signals with performance metrics
-* **unparsed_signals.csv** → signals failed parsing
-* **Console Summary** → win rate, avg win/loss, expectancy, compounded return, max drawdown
+* `signals_analysis.csv` → validated signals with performance metrics
+* `unparsed_signals.csv` → signals that failed parsing
+* Console summary with statistics: win rate, average win/loss, expectancy per trade, compounded return, max drawdown
 
 ---
 
-## 📄 Input Format
+## 📅 Input Format
 
-* JSON array of message objects with `id`, `content`, `timestamp`.
-* Recognizes patterns like `#SYMBOL/USDT` or `#SYMBOL/USDC`.
-* Skips messages that are “target reached” updates or reference futures.
+* A JSON array of exported message objects (with fields like `id`, `content`, `timestamp`).
+* Supports patterns such as `#SYMBOL/USDT` or `#SYMBOL/USDC`.
+* Skips messages that are simple “target reached” updates or refer to futures/perpetuals.
 
 ---
 
-## 🗃 Outputs
+## 📂 Outputs Explained
 
-### 1️⃣ signals_analysis.csv
+### 1️⃣ `signals_analysis.csv`
 
-Fields:
+Fields include: `id`, `symbol`, `direction`, `signal_date`, `entry`, `targets`, `stop`, `exit_price`, `exit_reason`, `num_targets_hit`, `total_targets`, `stop_hit`, `net_return_pct`, `outcome`, `policy`.
 
-```
-id, symbol, direction, signal_date, entry, targets, stop, exit_price,
-exit_reason, num_targets_hit, total_targets, stop_hit, net_return_pct,
-outcome, policy
-```
+### 2️⃣ `unparsed_signals.csv`
 
-### 2️⃣ unparsed_signals.csv
-
-Fields:
-
-```
-id, reason, content_snippet, symbol, notes
-```
+Fields: `id`, `reason` (why parsing failed), `content_snippet`, `symbol`, `notes`.
 
 ### 3️⃣ Console Summary
 
+Reports:
+
 * Win rate
-* Avg win/loss
+* Average win / average loss
 * Expectancy per trade
 * Compounded return
-* Max drawdown
+* Maximum drawdown
 
 ---
 
-## ⚙ Configuration Reference
+## 🧭 Notes
 
-| Parameter     | Description                                 |
-| ------------- | ------------------------------------------- |
-| VERBOSE       | Show progress/info prints                   |
-| EXIT_POLICY   | 'first_tp', 'last_tp', or 'scale_out_equal' |
-| TAKER_FEE_PCT | Fee percentage for taker orders             |
-| MAKER_FEE_PCT | Fee percentage for maker orders             |
-| USE_TAKER     | Market (taker) or maker execution           |
+* The full pipeline: Export signals from Discord → validate them → simulate trades → generate performance reports.
+* Designed for Binance **Spot** market only (not futures/perpetual).
+* Be sure to review your exit policy and fee/slippage assumptions — they will strongly affect results.
 
 ---
-
-## 🔗 Notes
-
-* Full pipeline: **Discord signal export → validation → trade simulation → performance reporting**
-* Designed for **Binance Spot** only
-
-
-
 

@@ -41,7 +41,7 @@ This repository contains a **Python script** that:
 1. Clone the repository:
 
 ```bash
-git clone <[your-repo-url](https://github.com/JohnnyMeister/Elite-Crypto-Signals-Perfomance-Analyser.git)>
+git clone <https://github.com/JohnnyMeister/Elite-Crypto-Signals-Perfomance-Analyser.git>
 cd <repo-folder>
 ```
 
